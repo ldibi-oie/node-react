@@ -33,8 +33,14 @@ function connectionToPostGres() {
   sequelizeInstance.sync();
   return sequelizeInstance;
 }
-server.use("/", SecurityRouter, UserRouter);
-server.use("/api", verifyToken, SkillRouter, MessagingRouter, ContactRouter);
+server.use(
+  "/",
+  SecurityRouter,
+  UserRouter,
+  SkillRouter,
+  MessagingRouter,
+  ContactRouter
+);
 
 server.use(express.json());
 

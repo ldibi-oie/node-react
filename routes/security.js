@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const { createToken, verifyToken } = require("../lib/jwt");
 const { ValidationError } = require("sequelize");
-const User = require("../models/sequelize/User");
+const User = require("../models//User");
 const bcryptjs = require("bcryptjs");
 
 const router = new Router();

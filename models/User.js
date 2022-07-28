@@ -1,5 +1,5 @@
 const { DataTypes, Model } = require("sequelize");
-const sequelize = require("../../database/connnection");
+const sequelize = require("../database/connnection");
 const Skill = require("./Skill");
 
 class User extends Model {}
@@ -54,6 +54,7 @@ User.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
+
     address: {
       type: DataTypes.STRING,
       allowNull: false,

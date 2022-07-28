@@ -1,6 +1,7 @@
 const UserService = require("../services/UserService");
-const User = require("../models/sequelize/User");
-const { user } = require("../middlewares/verifyToken");
+const User = require("../models//User");
+const { createToken, verifyToken } = require("../lib/jwt");
+
 const { ValidationError } = require("sequelize");
 const sequelize = require("../database/connnection");
 const { Router } = require("express");
@@ -28,15 +29,29 @@ router.get("/users", async (req, res) => {
   }
 });
 
-router.get("/user", async (req, res) => {
+router.put("/users/skill", async (req, res) => {
+  console.log(req.body)
   try {
-    console.log(user);
-    res.json(req.user);
+    const users = await User.update({
+      skill: req.body
+    });
+    res.json(users);
   } catch (error) {
     res.sendStatus(500);
     console.error(error);
   }
 });
+
+// router.post("/user", async (req, res) => {
+//   console.log(req.body);
+//   try {
+//     console.log(verifyToken(req.body.token));
+//     return verifyToken(req.body.token);
+//   } catch (error) {
+//     res.sendStatus(500);
+//     console.error(error);
+//   }
+// });
 
 router.post("/users", async (req, res) => {
   try {

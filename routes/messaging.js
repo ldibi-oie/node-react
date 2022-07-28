@@ -1,5 +1,5 @@
 const express = require('express');
-const Messaging = require('../models/sequelize')
+const Messaging = require("../models/Messaging");
 const {Router} = require("express");
 
 const router = new Router();
