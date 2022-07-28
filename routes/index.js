@@ -8,7 +8,6 @@ module.exports = (params) => {
         res.send('Home Page');
     });
 
-    router.use('/user', usersRoute());
 
     return router;
 };

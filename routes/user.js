@@ -1,5 +1,6 @@
-const User = require("../models/sequelize");
 const UserService = require("../services/UserService");
+const User = require("../models/sequelize/User");
+const { user } = require("../middlewares/verifyToken");
 const { ValidationError } = require("sequelize");
 const sequelize = require("../database/connnection");
 const { Router } = require("express");
@@ -21,6 +22,16 @@ router.get("/users", async (req, res) => {
   try {
     const users = await User.findAll();
     res.json(users);
+  } catch (error) {
+    res.sendStatus(500);
+    console.error(error);
+  }
+});
+
+router.get("/user", async (req, res) => {
+  try {
+    console.log(user);
+    res.json(req.user);
   } catch (error) {
     res.sendStatus(500);
     console.error(error);

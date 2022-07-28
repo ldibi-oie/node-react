@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { createToken } = require("../lib/jwt");
+const { createToken, verifyToken } = require("../lib/jwt");
 const { ValidationError } = require("sequelize");
 const User = require("../models/sequelize/User");
 const bcryptjs = require("bcryptjs");
@@ -31,22 +31,27 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.get("/logout", async (req, res) => {
+  try {
+    var p = localStorage;
+    p.clear();
+    res.json({
+      status: true,
+    });
+  } catch (error) {
+    res.json({
+      status: false,
+      errors: error.message,
+    });
+  }
+});
+
 router.post("/register", async (req, res) => {
   try {
-    const user = await User.create(req.body).then((response) => {
-      res.send(response);
-    });
-    res.status(201).json(user);
+    localStorage.removeItem("token");
+    res.status(201).json({ status: true });
   } catch (error) {
-    if (error instanceof ValidationError) {
-      res.status(422).json({
-        quantity: "must be greather than 0",
-        title: "must not be empty",
-      });
-    } else {
-      res.sendStatus(500);
-      console.error(error);
-    }
+    res.json({ status: false, error: error.message });
   }
 });
 

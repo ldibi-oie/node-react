@@ -9,6 +9,7 @@ const logger = require("bunyan");
 const cors = require("cors");
 const { verifyToken } = require("../lib/jwt");
 const server = express();
+const STATIC_CHANNELS = ["global_notifications", "global_chat"];
 
 require("../database/connnection");
 
@@ -16,7 +17,7 @@ server.use(cors());
 server.use(express.urlencoded({ extended: true }));
 server.use(express.json());
 require("dotenv").config();
-console.log(process.env);
+// console.log(process.env);
 const sequelizeInstance = sequelize;
 
 function connectionToPostGres() {
@@ -32,29 +33,16 @@ function connectionToPostGres() {
   sequelizeInstance.sync();
   return sequelizeInstance;
 }
-server.use("/", SecurityRouter);
-server.use(
-  "/api",
-  verifyToken,
-  UserRouter,
-  SkillRouter,
-  MessagingRouter,
-  ContactRouter
-);
-
-// io.attach(app, {
-//   // includes local domain to avoid CORS error locally
-//   // configure it accordingly for production
-//   cors: {
-//     origin: 'http://localhost',
-//     methods: ['GET', 'POST'],
-//     credentials: true,
-//     transports: ['websocket', 'polling'],
-//   },
-//   allowEIO3: true,
-// })
+server.use("/", SecurityRouter, UserRouter);
+server.use("/api", verifyToken, SkillRouter, MessagingRouter, ContactRouter);
 
 server.use(express.json());
+
+server.get("/getChannels", (req, res) => {
+  res.json({
+    channels: STATIC_CHANNELS,
+  });
+});
 
 const app = server.listen(process.env.PORT || 3220);
 
@@ -65,6 +53,18 @@ const io = require("socket.io")(app, {
 io.on("connection", (socket) => {
   console.log("👾 New socket connected! >>", socket.id);
   socket.emit("connection", null);
+});
+
+io.attach(app, {
+  // includes local domain to avoid CORS error locally
+  // configure it accordingly for production
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+    credentials: true,
+    transports: ["websocket", "polling"],
+  },
+  allowEIO3: true,
 });
 
 server.on("listening", () => {
